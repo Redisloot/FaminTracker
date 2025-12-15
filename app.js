@@ -1,4 +1,4 @@
-const API = "https://script.google.com/macros/s/AKfycbyE0Qfzq2XMziWj2ASbdf9Zge7ALRjXH13EzIXKHSpgtwLvHBktw7GibODhLK8O-Cfy/exec";
+const API = "https://script.google.com/macros/s/AKfycbxcBFQcxJWPd76FvPXucmw6CdFZ-gGdC1ZSePykOPApAxekHbd2B4Wnz-3as1UJlafW/exec";
 let people = [];
 
 fetch(API).then(r => r.json()).then(r => {
@@ -111,6 +111,7 @@ function toBase64(file) {
     r.readAsDataURL(file);
   });
 }
+
 
 
 
