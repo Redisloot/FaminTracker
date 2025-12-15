@@ -1,4 +1,4 @@
-const API = "https://script.google.com/macros/s/AKfycbxcBFQcxJWPd76FvPXucmw6CdFZ-gGdC1ZSePykOPApAxekHbd2B4Wnz-3as1UJlafW/exec";
+const API = "https://script.google.com/macros/s/AKfycbyS60YEgkcmrF3EkwK8L_CFvZJxy2qeTw2bx5joHL6RB5uObXD3VROpZPtESfA4SCAm/exec";
 let people = [];
 
 fetch(API)
@@ -9,26 +9,26 @@ fetch(API)
   });
 
 function drawTree() {
-  if (people.length === 0) return;
+  if (!people.length) return;
 
-  const rootPerson =
-    people.find(p => JSON.parse(p.parent_ids || "[]").length === 0)
-    || people[0];
+  const rootPerson = people.find(p =>
+    JSON.parse(p.parent_ids || "[]").length === 0
+  ) || people[0];
 
   const map = Object.fromEntries(people.map(p => [p.id, p]));
 
-  function node(p) {
+  function makeNode(p) {
     return {
       name: p.full_name,
       data: p,
       children: JSON.parse(p.child_ids || "[]")
         .map(id => map[id])
         .filter(Boolean)
-        .map(node)
+        .map(makeNode)
     };
   }
 
-  const root = d3.hierarchy(node(rootPerson));
+  const root = d3.hierarchy(makeNode(rootPerson));
   const tree = d3.tree().nodeSize([120, 180]);
   tree(root);
 
@@ -43,10 +43,7 @@ function drawTree() {
     .enter()
     .append("path")
     .attr("class", "link")
-    .attr("d", d3.linkVertical()
-      .x(d => d.x)
-      .y(d => d.y)
-    );
+    .attr("d", d3.linkVertical().x(d => d.x).y(d => d.y));
 
   const n = g.selectAll(".node")
     .data(root.descendants())
@@ -79,25 +76,22 @@ function closeForm() {
 }
 
 async function save() {
-  const name = document.getElementById("nameInput").value.trim();
-  if (!name) {
+  const fullName = document.getElementById("fullName").value.trim();
+  if (!fullName) {
     alert("Name is required");
     return;
   }
 
-  const bio = document.getElementById("bioInput").value;
-  const file = document.getElementById("photoInput").files[0];
-
+  const file = document.getElementById("photo").files[0];
   let photoUrl = "";
 
   if (file) {
-    const b64 = await toBase64(file);
-
+    const base64 = await toBase64(file);
     const upload = await fetch(API, {
       method: "POST",
       body: JSON.stringify({
         action: "upload",
-        file: b64,
+        file: base64,
         type: file.type,
         name: file.name
       })
@@ -111,9 +105,15 @@ async function save() {
     body: JSON.stringify({
       action: "save",
       id: crypto.randomUUID(),
-      full_name: name,
-      bio: bio,
-      photo_url: photoUrl
+      full_name: fullName,
+      birth_date: document.getElementById("birthDate").value,
+      death_date: document.getElementById("deathDate").value,
+      parent_ids: [],
+      spouse_ids: [],
+      child_ids: [],
+      photo_url: photoUrl,
+      bio: document.getElementById("bio").value,
+      sources: document.getElementById("sources").value
     })
   });
 
@@ -127,6 +127,3 @@ function toBase64(file) {
     r.readAsDataURL(file);
   });
 }
-
-
-
