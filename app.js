@@ -11,26 +11,26 @@ fetch(API)
 function drawTree() {
   if (!people.length) return;
 
-  const rootPerson = people.find(p =>
+  const root = people.find(p =>
     JSON.parse(p.parent_ids || "[]").length === 0
   ) || people[0];
 
   const map = Object.fromEntries(people.map(p => [p.id, p]));
 
-  function makeNode(p) {
+  function node(p) {
     return {
       name: p.full_name,
       data: p,
       children: JSON.parse(p.child_ids || "[]")
         .map(id => map[id])
         .filter(Boolean)
-        .map(makeNode)
+        .map(node)
     };
   }
 
-  const root = d3.hierarchy(makeNode(rootPerson));
   const tree = d3.tree().nodeSize([120, 180]);
-  tree(root);
+  const rootNode = d3.hierarchy(node(root));
+  tree(rootNode);
 
   const svg = d3.select("#tree");
   svg.selectAll("*").remove();
@@ -39,14 +39,14 @@ function drawTree() {
   svg.call(d3.zoom().on("zoom", e => g.attr("transform", e.transform)));
 
   g.selectAll(".link")
-    .data(root.links())
+    .data(rootNode.links())
     .enter()
     .append("path")
     .attr("class", "link")
     .attr("d", d3.linkVertical().x(d => d.x).y(d => d.y));
 
   const n = g.selectAll(".node")
-    .data(root.descendants())
+    .data(rootNode.descendants())
     .enter()
     .append("g")
     .attr("class", "node")
@@ -76,9 +76,9 @@ function closeForm() {
 }
 
 async function save() {
-  const fullName = document.getElementById("fullName").value.trim();
-  if (!fullName) {
-    alert("Name is required");
+  const name = document.getElementById("fullName").value.trim();
+  if (!name) {
+    alert("Name required");
     return;
   }
 
@@ -86,26 +86,27 @@ async function save() {
   let photoUrl = "";
 
   if (file) {
-    const base64 = await toBase64(file);
-    const upload = await fetch(API, {
+    const b64 = await toBase64(file);
+
+    fetch(API, {
       method: "POST",
+      mode: "no-cors",
       body: JSON.stringify({
         action: "upload",
-        file: base64,
+        file: b64,
         type: file.type,
         name: file.name
       })
-    }).then(r => r.json());
-
-    photoUrl = upload.url;
+    });
   }
 
-  await fetch(API, {
+  fetch(API, {
     method: "POST",
+    mode: "no-cors",
     body: JSON.stringify({
       action: "save",
       id: crypto.randomUUID(),
-      full_name: fullName,
+      full_name: name,
       birth_date: document.getElementById("birthDate").value,
       death_date: document.getElementById("deathDate").value,
       parent_ids: [],
@@ -117,6 +118,7 @@ async function save() {
     })
   });
 
+  alert("Saved! Reloading…");
   location.reload();
 }
 
