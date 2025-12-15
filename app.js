@@ -1,20 +1,30 @@
 const API = "https://script.google.com/macros/s/AKfycbxcBFQcxJWPd76FvPXucmw6CdFZ-gGdC1ZSePykOPApAxekHbd2B4Wnz-3as1UJlafW/exec";
 let people = [];
 
-fetch(API).then(r => r.json()).then(r => {
-  people = r.data;
-  drawTree();
-});
+fetch(API)
+  .then(r => r.json())
+  .then(r => {
+    people = r.data;
+    drawTree();
+  });
 
 function drawTree() {
-  const rootPerson = people.find(p => JSON.parse(p.parent_ids || "[]").length === 0);
+  if (people.length === 0) return;
+
+  const rootPerson =
+    people.find(p => JSON.parse(p.parent_ids || "[]").length === 0)
+    || people[0];
+
   const map = Object.fromEntries(people.map(p => [p.id, p]));
 
   function node(p) {
     return {
       name: p.full_name,
       data: p,
-      children: JSON.parse(p.child_ids || "[]").map(id => node(map[id]))
+      children: JSON.parse(p.child_ids || "[]")
+        .map(id => map[id])
+        .filter(Boolean)
+        .map(node)
     };
   }
 
@@ -24,8 +34,8 @@ function drawTree() {
 
   const svg = d3.select("#tree");
   svg.selectAll("*").remove();
-  const g = svg.append("g");
 
+  const g = svg.append("g");
   svg.call(d3.zoom().on("zoom", e => g.attr("transform", e.transform)));
 
   g.selectAll(".link")
@@ -35,7 +45,8 @@ function drawTree() {
     .attr("class", "link")
     .attr("d", d3.linkVertical()
       .x(d => d.x)
-      .y(d => d.y));
+      .y(d => d.y)
+    );
 
   const n = g.selectAll(".node")
     .data(root.descendants())
@@ -51,7 +62,7 @@ function drawTree() {
 
 function view(p) {
   document.getElementById("viewName").textContent = p.full_name;
-  document.getElementById("viewBio").textContent = p.bio;
+  document.getElementById("viewBio").textContent = p.bio || "";
   document.getElementById("viewPhoto").src = p.photo_url || "";
   document.getElementById("viewModal").classList.remove("hidden");
 }
@@ -68,35 +79,40 @@ function closeForm() {
 }
 
 async function save() {
-  const password = document.getElementById("password").value;
+  const name = document.getElementById("nameInput").value.trim();
+  if (!name) {
+    alert("Name is required");
+    return;
+  }
+
+  const bio = document.getElementById("bioInput").value;
   const file = document.getElementById("photoInput").files[0];
 
   let photoUrl = "";
 
   if (file) {
     const b64 = await toBase64(file);
-    const res = await fetch(API, {
+
+    const upload = await fetch(API, {
       method: "POST",
       body: JSON.stringify({
         action: "upload",
-        password,
         file: b64,
         type: file.type,
         name: file.name
       })
     }).then(r => r.json());
 
-    photoUrl = res.url;
+    photoUrl = upload.url;
   }
 
   await fetch(API, {
     method: "POST",
     body: JSON.stringify({
       action: "save",
-      password,
       id: crypto.randomUUID(),
-      full_name: document.getElementById("nameInput").value,
-      bio: document.getElementById("bioInput").value,
+      full_name: name,
+      bio: bio,
       photo_url: photoUrl
     })
   });
@@ -111,7 +127,6 @@ function toBase64(file) {
     r.readAsDataURL(file);
   });
 }
-
 
 
 
