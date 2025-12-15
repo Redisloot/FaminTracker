@@ -18,7 +18,7 @@
 
 <button id="addBtn">➕ Add Family Member</button>
 
-<!-- VIEW MODAL -->
+<!-- VIEW -->
 <div id="viewModal" class="modal hidden">
   <div class="card">
     <img id="viewPhoto" />
@@ -28,13 +28,20 @@
   </div>
 </div>
 
-<!-- ADD FORM -->
+<!-- ADD -->
 <div id="formModal" class="modal hidden">
   <div class="card">
     <h2>Add Family Member</h2>
-    <input id="nameInput" placeholder="Full name" />
-    <textarea id="bioInput" placeholder="Biography"></textarea>
-    <input id="photoInput" type="file" />
+
+    <input id="fullName" placeholder="Full name" />
+    <input id="birthDate" type="date" />
+    <input id="deathDate" type="date" />
+
+    <textarea id="bio" placeholder="Biography"></textarea>
+    <textarea id="sources" placeholder="Sources / notes"></textarea>
+
+    <input id="photo" type="file" />
+
     <button onclick="save()">Save</button>
     <button onclick="closeForm()">Cancel</button>
   </div>
