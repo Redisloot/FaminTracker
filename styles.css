@@ -2,39 +2,76 @@ body {
   font-family: system-ui;
   margin: 0;
   padding: 1rem;
+  background: #f8f9fb;
 }
 
-#tree-container {
-  width: 100%;
-  height: 80vh;
+h1 {
+  text-align: center;
+}
+
+#tree-wrapper {
+  height: 75vh;
   border: 1px solid #ccc;
-  overflow: auto;
+  border-radius: 12px;
+  background: white;
 }
 
-.node {
-  padding: 8px;
-  background: #f3f3f3;
-  border-radius: 8px;
-  cursor: pointer;
+svg {
+  width: 100%;
+  height: 100%;
 }
 
-#modal {
+.node circle {
+  fill: #cfe2ff;
+  stroke: #333;
+  stroke-width: 2;
+}
+
+.node text {
+  font-size: 14px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.link {
+  fill: none;
+  stroke: #aaa;
+  stroke-width: 2;
+}
+
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+}
+
+.modal {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.hidden { display: none; }
+.hidden {
+  display: none;
+}
 
-.modal-content {
+.card {
   background: white;
-  max-width: 400px;
-  margin: 10% auto;
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 400px;
 }
 
-img {
+.card img {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 12px;
 }
