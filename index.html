@@ -4,10 +4,15 @@
   <meta charset="UTF-8" />
   <title>Our Family Tree</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <h1>Our Family Tree</h1>
-  <div id="tree-container"></div>
+  <div id="tree-wrapper">
+  <svg id="tree"></svg>
+</div>
+
+<button id="addBtn">➕ Add Family Member</button>
 
   <div id="modal" class="hidden">
     <div class="modal-content">
@@ -21,3 +26,4 @@
   <script src="app.js"></script>
 </body>
 </html>
+
