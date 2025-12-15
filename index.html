@@ -3,27 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <title>Our Family Tree</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Our Family Tree</h1>
-  <div id="tree-wrapper">
+
+<h1>Our Family Tree</h1>
+
+<div id="tree-wrapper">
   <svg id="tree"></svg>
 </div>
 
 <button id="addBtn">➕ Add Family Member</button>
 
-  <div id="modal" class="hidden">
-    <div class="modal-content">
-      <span id="close">×</span>
-      <img id="photo" />
-      <h2 id="name"></h2>
-      <p id="bio"></p>
-    </div>
+<!-- VIEW MODAL -->
+<div id="viewModal" class="modal hidden">
+  <div class="card">
+    <img id="viewPhoto" />
+    <h2 id="viewName"></h2>
+    <p id="viewBio"></p>
+    <button onclick="closeView()">Close</button>
   </div>
+</div>
 
-  <script src="app.js"></script>
+<!-- FORM MODAL -->
+<div id="formModal" class="modal hidden">
+  <div class="card">
+    <input id="password" type="password" placeholder="Family password" />
+    <input id="nameInput" placeholder="Full name" />
+    <textarea id="bioInput" placeholder="Biography"></textarea>
+    <input id="photoInput" type="file" />
+    <button onclick="save()">Save</button>
+    <button onclick="closeForm()">Cancel</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
-
