@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxhDLVEo9bx1E7fwFnqgyeUp-41ef6KQWoEQxX2ZhvCcY9IqS_eUFjTSuMUthlj3hj2/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxk_igWWM4S7D8mjh5qveVTui-UKk9vsr6SQz6Iu3EJ6kvONUCsoAuiKCmXg6kqW-Zs/exec";
 
 fetch(API_URL)
   .then(r => r.json())
@@ -24,3 +24,4 @@ function openModal(person) {
 
 document.getElementById("close").onclick = () =>
   document.getElementById("modal").classList.add("hidden");
+
